@@ -1,0 +1,18 @@
+{
+  "name": "PongPing",
+  "version": "0.1.0",
+  "description": "data display page for ping pong table usage",
+  "main": "webpack.config.js",
+  "repository": "https://github.com/tmlewallen/PongPing.git",
+  "author": "tmlewallen <tlew0692@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "babel-core": "^6.22.1",
+    "babel-loader": "^6.2.10",
+    "babel-preset-es2015": "^6.22.0",
+    "babel-preset-react": "^6.22.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "webpack": "^2.2.1"
+  }
+}
