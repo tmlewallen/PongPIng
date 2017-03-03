@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Chart from './chart';
 
 class Main extends React.Component {
     render() {
         return (
-            <h1>It works!</h1>
+            <Chart></Chart>
         );
     }
 }
