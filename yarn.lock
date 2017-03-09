@@ -1125,6 +1125,10 @@ d3-axis@1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/d3-axis/-/d3-axis-1.0.4.tgz#bdfdcf5e859824062e0f17ad920f76236e72512c"
 
+d3-axis@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/d3-axis/-/d3-axis-1.0.5.tgz#865db17a7b54433e3b35c1d2b1a76bdb7c3d434d"
+
 d3-brush@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-brush/-/d3-brush-1.0.3.tgz#4fa5374cc3b755d0990bf76b71b7a66417751c74"
@@ -1182,7 +1186,11 @@ d3-force@1.0.4:
     d3-quadtree "1"
     d3-timer "1"
 
-d3-format@1, d3-format@1.0.2:
+d3-format@1, d3-format@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.1.0.tgz#736775d5e6604421bef6c76d5746638a8e70d295"
+
+d3-format@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.0.2.tgz#138618320b4bbeb43b5c0ff30519079fbbd7375e"
 
@@ -1231,7 +1239,7 @@ d3-request@1.0.3:
     d3-dsv "1"
     xmlhttprequest "1"
 
-d3-scale@1.0.4:
+d3-scale@1.0.4, d3-scale@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/d3-scale/-/d3-scale-1.0.4.tgz#50e28bf6a193b706745528515ed9b3d44205a033"
   dependencies:
@@ -1243,13 +1251,23 @@ d3-scale@1.0.4:
     d3-time "1"
     d3-time-format "2"
 
-d3-selection@1, d3-selection@1.0.3:
+d3-selection@1, d3-selection@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/d3-selection/-/d3-selection-1.0.4.tgz#b862c7ae22436efe8459b7659ccdae84f09b43a3"
+
+d3-selection@1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/d3-selection/-/d3-selection-1.0.3.tgz#e63e51416172427854c1bcdfa066eb5fe872c108"
 
 d3-shape@1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-1.0.4.tgz#145ee100ccbec42f8e3f1996cd05c786f79fe1c6"
+  dependencies:
+    d3-path "1"
+
+d3-shape@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/d3-shape/-/d3-shape-1.0.5.tgz#2e1946fbd9cf468d9f8dc6d2e58d6c4278ae286a"
   dependencies:
     d3-path "1"
 
@@ -1337,13 +1355,13 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
 
-debug@2.6.1:
+debug@2.6.1, debug@^2.2.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.1.tgz#79855090ba2c4e3115cc7d8769491d58f0491351"
   dependencies:
     ms "0.7.2"
 
-debug@^2.1.1, debug@^2.2.0, debug@~2.2.0:
+debug@^2.1.1, debug@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.2.0.tgz#f87057e995b1a1f6ae6a4960664137bc56f039da"
   dependencies:
@@ -2783,13 +2801,9 @@ q@^1.1.2:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.4.1.tgz#55705bcd93c5f3673530c2c2cbc0c2b3addc286e"
 
-qs@6.3.1:
+qs@6.3.1, qs@~6.3.0:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.1.tgz#918c0b3bcd36679772baf135b1acb4c1651ed79d"
-
-qs@~6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/qs/-/qs-6.3.0.tgz#f403b264f23bc01228c74131b407f18d5ea5d442"
 
 query-string@^4.1.0:
   version "4.3.2"

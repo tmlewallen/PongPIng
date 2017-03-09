@@ -1,6 +1,6 @@
 import React from 'react';
 import 'whatwg-fetch';
-import * as d3 from 'd3';
+import d3 from './d3';
 import MOCK from './MOCK';
 
 export default class Chart extends React.Component {
@@ -9,30 +9,45 @@ export default class Chart extends React.Component {
         this.state = {
             data : MOCK
         };
-        this.getPongStats();
-        this.pollPongStats(5000);
+
+
+
+        // this.getPongStats();
+        // this.pollPongStats(5000);
+
+
+
+
+
+        // d3.select('.chart')
+        //     .append('g')
+        //     .call(axis);
     }
 
     componentDidMount() {
-        this.svg= d3.select('#chart')
-            .append('svg')
-            .attr('width', '100%')
-            .attr('height', '100%');
-        this.updateChart(this.state.data);
-    }
+        var points = MOCK.length;
+        var width = 1000;
+        var height = 500;
+        var scale = d3.scaleLinear()
+            .domain([0,1000])
+            .range([0,1000]);
+        this.chart = d3.line()
+            .x( (d, i) => { return i * (width / points) } )
+            .y( d =>  d.value * 100);
 
-    updateChart(data){
-        this.svg.selectAll('rect')
-            .data(data)
-            .enter()
-            .append('rect')
-            .attr('width', 5)
-            .attr('height', (datum) => {
-                return 100 * datum.value;
-            })
-            .attr('x', (datum, i) => {
-                return i * 6;
-            });
+        var axis = d3.axisBottom(scale).ticks(5);
+
+        this.svg = d3.select('.chart')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+        this.svg.append('path')
+            .attr('stroke', 'red')
+            .attr('fill', 'none')
+            .attr('d', this.chart(MOCK));
+        this.svg.append('g')
+            .attr('stroke', 'black')
+            .call(axis);
     }
 
     getPongStats() {
@@ -48,14 +63,17 @@ export default class Chart extends React.Component {
     pollPongStats(period) {
         setTimeout( () => {
            this.getPongStats();
-           this.updateChart(this.state.data);
            this.pollPongStats(period);
         }, period);
     }
 
     render() {
         return (
-            <div id="chart"/>
+            <div className="chart">
+            {/*<svg className="chart" width="100%" height="100%">*/}
+                {/*<path stroke={'red'} fill={'none'} d={this.chart(this.state.data)}/>*/}
+            {/*</svg>*/}
+            </div>
         );
     }
 }
