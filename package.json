@@ -20,6 +20,7 @@
     "d3-selection": "^1.0.4",
     "d3-shape": "^1.0.5",
     "express": "^4.15.0",
+    "lodash": "^4.17.4",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "style-loader": "^0.13.1",

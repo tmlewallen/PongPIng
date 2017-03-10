@@ -2,52 +2,73 @@ import React from 'react';
 import 'whatwg-fetch';
 import d3 from './d3';
 import MOCK from './MOCK';
+import * as _ from 'lodash';
 
 export default class Chart extends React.Component {
     constructor() {
         super();
         this.state = {
-            data : MOCK
+            data : MOCK,
+            width: 0,
+            height : 0
         };
-
-
 
         // this.getPongStats();
         // this.pollPongStats(5000);
-
-
-
-
-
-        // d3.select('.chart')
-        //     .append('g')
-        //     .call(axis);
     }
 
     componentDidMount() {
+        this.div = d3.select('.chart');
+
+        d3.select(window).on('resize', this.resize);
+
         var points = MOCK.length;
-        var width = 1000;
-        var height = 500;
+
         var scale = d3.scaleLinear()
             .domain([0,1000])
             .range([0,1000]);
-        this.chart = d3.line()
-            .x( (d, i) => { return i * (width / points) } )
+
+        var graph = d3.line()
+            .x( (d, i) => { return i * (this.state.width / points) } )
             .y( d =>  d.value * 100);
 
         var axis = d3.axisBottom(scale).ticks(5);
 
-        this.svg = d3.select('.chart')
+        this.svg = this.div
             .append('svg')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', this.state.width)
+            .attr('height', this.state.height);
         this.svg.append('path')
             .attr('stroke', 'red')
             .attr('fill', 'none')
-            .attr('d', this.chart(MOCK));
+            .attr('d', graph(this.state.data));
         this.svg.append('g')
             .attr('stroke', 'black')
             .call(axis);
+
+        this.resize();
+    }
+
+    resize(){
+        let width = Number.parseFloat(_.trim(this.tyle('width'), 'px'));
+        let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
+        this.setState({
+            data : this.state.data,
+            height : height,
+            width : width
+        });
+        console.debug('Resized... state is ');
+        console.debug(this.state);
+
+        var graph = d3.line()
+            .x( (d, i) => { return i * (this.state.width / this.state.data.length) } )
+            .y( d =>  d.value * 100);
+
+        this.svg
+            .attr('width', this.state.width)
+            .attr('height', this.state.height)
+            .select('path')
+            .attr('d', graph(this.state.data));
     }
 
     getPongStats() {
