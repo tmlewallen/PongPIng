@@ -29,9 +29,10 @@ export default class Chart extends React.Component {
         this.svg = d3.select('.chart');
 
         this.svg.append('path')
+            .datum(this.state.data)
             .attr('stroke', 'red')
             .attr('fill', 'none')
-            .attr('d', graph(this.state.data));
+            .attr('d', graph);
 
     }
 
@@ -46,11 +47,10 @@ export default class Chart extends React.Component {
             .x( (d, i) => { return i * (width / this.state.data.length) } )
             .y( d =>  d.value * 100);
 
-        this.svg
-            .attr('width', width)
-            .attr('height', height)
-            .select('path')
-            .attr('d', graph(this.state.data));
+        this.svg.select('path')
+            .datum(this.state.data)
+            .attr('d', graph);
+
     }
 
     getPongStats() {
