@@ -8,78 +8,47 @@ export default class Chart extends React.Component {
     constructor() {
         super();
         this.state = {
-            data : MOCK,
-            width: 1000,
-            height : 1000
+            data : []
         };
 
-        // this.getPongStats();
-        // this.pollPongStats(5000);
+        this.getPongStats();
+        this.pollPongStats(2000);
     }
 
     componentDidMount() {
-        this.div = d3.select('.chart');
+        this.div = d3.select('#chart-container');
         let width = Number.parseFloat(_.trim(this.div.style('width'), 'px'));
         let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
-        this.setState({
-            data : this.state.data,
-            height : height,
-            width : width
-        });
 
-
-        d3.select(window).on('resize', this.resize.bind(this));
-
-
-        var points = MOCK.length;
-
-
+        d3.select(window).on('resize', this.rebuildChart.bind(this));
 
         var graph = d3.line()
-            .x( (d, i) => { return i * (this.state.width / points) } )
-            .y( d =>  d.value * 100);
+            .x( (d, i) => { return i * (width / this.state.data.length) } )
+            .y( d =>  d.value * 100).bind(this);
 
+        this.svg = d3.select('.chart');
 
-
-
-        this.svg = this.div
-            .append('svg')
-            .attr('width', this.state.width)
-            .attr('height', this.state.height);
         this.svg.append('path')
             .attr('stroke', 'red')
             .attr('fill', 'none')
             .attr('d', graph(this.state.data));
 
-        // this.scale = d3.scaleLinear()
-        //     .domain([0,1000])
-        //     .range([0,this.state.width]);
-        // var axis = d3.axisBottom(this.scale).ticks(5);
-        // this.svg.append('g')
-        //     .attr('stroke', 'black')
-        //     .call(axis);
-
-        this.resize();
     }
 
-    resize(){
+    rebuildChart(){
         let width = Number.parseFloat(_.trim(this.div.style('width'), 'px'));
         let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
-        this.setState({
-            data : this.state.data,
-            height : height,
-            width : width
-        });
-        console.debug('Resized... state is ');
-        console.debug(this.state);
+
+        console.debug('Resized... dimensions are');
+        console.debug('\tWidth : ' + width + ', Height : ' + height);
 
         var graph = d3.line()
-            .x( (d, i) => { return i * (this.state.width / this.state.data.length) } )
+            .x( (d, i) => { return i * (width / this.state.data.length) } )
             .y( d =>  d.value * 100);
 
         this.svg
-            .attr('width', this.state.width)
-            .attr('height', this.state.height)
+            .attr('width', width)
+            .attr('height', height)
             .select('path')
             .attr('d', graph(this.state.data));
     }
@@ -88,6 +57,7 @@ export default class Chart extends React.Component {
         fetch('./data').then( (response) => {
             response.json().then( (d) => {
                 this.setState({ data : d});
+                this.rebuildChart();
             });
         }).catch( (err) => {
             console.error(err);
@@ -104,11 +74,9 @@ export default class Chart extends React.Component {
     render() {
         return (
             <div>
-                <button onClick={this.resize.bind(this)}>Click Me</button>
-                <div className="chart">
-                    {/*<svg className="chart" width="100%" height="100%">*/}
-                    {/*<path stroke={'red'} fill={'none'} d={this.chart(this.state.data)}/>*/}
-                    {/*</svg>*/}
+                <button onClick={this.rebuildChart.bind(this)}>Click Me</button>
+                <div id="chart-container">
+                    <svg className="chart" width="100%" height="100%"/>
                 </div>
             </div>
 
