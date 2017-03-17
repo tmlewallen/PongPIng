@@ -22,9 +22,17 @@ export default class Chart extends React.Component {
 
         d3.select(window).on('resize', this.rebuildChart.bind(this));
 
+        var x = d3.scaleLinear()
+            .domain([0, this.state.data.length])
+            .range([0, width]);
+
+        var y = d3.scaleLinear()
+            .domain([0,1])
+            .range([0, height]);
+
         var graph = d3.line()
-            .x( (d, i) => { return i * (width / this.state.data.length) } )
-            .y( d =>  d.value * 100).bind(this);
+            .x( (d) => x(d.id) )
+            .y( (d) => y(d.value)  );
 
         this.svg = d3.select('.chart');
 
@@ -40,12 +48,20 @@ export default class Chart extends React.Component {
         let width = Number.parseFloat(_.trim(this.div.style('width'), 'px'));
         let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
 
-        console.debug('Resized... dimensions are');
-        console.debug('\tWidth : ' + width + ', Height : ' + height);
+        // console.debug('Resized... dimensions are');
+        // console.debug('\tWidth : ' + width + ', Height : ' + height);
+
+        var x = d3.scaleLinear()
+            .domain([0, this.state.data.length])
+            .range([0, width]);
+
+        var y = d3.scaleLinear()
+            .domain([0,1])
+            .range([0, height]);
 
         var graph = d3.line()
-            .x( (d, i) => { return i * (width / this.state.data.length) } )
-            .y( d =>  d.value * 100);
+            .x( (d) => x(d.id) )
+            .y( (d) => y(d.value)  );
 
         this.svg.select('path')
             .datum(this.state.data)
