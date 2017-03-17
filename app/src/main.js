@@ -8,6 +8,7 @@ class Main extends React.Component {
     render() {
         return (
             <div className="container">
+                <h1>DATA</h1>
                 <div className="row">
                     <Chart></Chart>
                 </div>
