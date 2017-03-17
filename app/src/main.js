@@ -2,11 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Chart from './chart';
 import styles from './styles.css';
+import bootstrap from '../../node_modules/bootstrap/dist/css/bootstrap.css';
 
 class Main extends React.Component {
     render() {
         return (
-            <Chart></Chart>
+            <div className="container">
+                <div className="row">
+                    <Chart></Chart>
+                </div>
+            </div>
+
         );
     }
 }

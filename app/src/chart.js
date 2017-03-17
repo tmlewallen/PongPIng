@@ -16,9 +16,13 @@ export default class Chart extends React.Component {
     }
 
     componentDidMount() {
-        this.div = d3.select('#chart-container');
-        let width = Number.parseFloat(_.trim(this.div.style('width'), 'px'));
-        let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
+        this.svg = d3.select('.chart');
+        let width = Number.parseFloat(_.trim(this.svg.style('width'), 'px'));
+        let height = Number.parseFloat(_.trim(this.svg.style('height'), 'px'));
+        let paddingRight = Number.parseFloat(_.trim(this.svg.style('padding-right'), 'px'));
+        let paddingLeft = Number.parseFloat(_.trim(this.svg.style('padding-left'), 'px'));
+
+        width = width - paddingRight - paddingLeft;
 
         d3.select(window).on('resize', this.rebuildChart.bind(this));
 
@@ -34,19 +38,30 @@ export default class Chart extends React.Component {
             .x( (d) => x(d.id) )
             .y( (d) => y(d.value)  );
 
-        this.svg = d3.select('.chart');
+        var axis = d3.axisBottom(x);
 
-        this.svg.append('path')
+
+        this.svg.append('g')
+            .attr('class', 'path-container')
+            .append('path')
             .datum(this.state.data)
             .attr('stroke', 'red')
             .attr('fill', 'none')
-            .attr('d', graph);
+            .attr('d', graph)
 
+        this.svg.append('g')
+            .attr('class', 'axis')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(axis);
     }
 
     rebuildChart(){
-        let width = Number.parseFloat(_.trim(this.div.style('width'), 'px'));
-        let height = Number.parseFloat(_.trim(this.div.style('height'), 'px'));
+        let width = Number.parseFloat(_.trim(this.svg.style('width'), 'px'));
+        let height = Number.parseFloat(_.trim(this.svg.style('height'), 'px'));
+        let paddingRight = Number.parseFloat(_.trim(this.svg.style('padding-right'), 'px'));
+        let paddingLeft = Number.parseFloat(_.trim(this.svg.style('padding-left'), 'px'));
+
+        width = width - paddingRight - paddingLeft;
 
         // console.debug('Resized... dimensions are');
         // console.debug('\tWidth : ' + width + ', Height : ' + height);
@@ -63,9 +78,15 @@ export default class Chart extends React.Component {
             .x( (d) => x(d.id) )
             .y( (d) => y(d.value)  );
 
+        var axis = d3.axisBottom(x);
+
         this.svg.select('path')
             .datum(this.state.data)
             .attr('d', graph);
+
+        this.svg.select('.axis')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(axis);
 
     }
 
@@ -89,13 +110,9 @@ export default class Chart extends React.Component {
 
     render() {
         return (
-            <div>
-                <button onClick={this.rebuildChart.bind(this)}>Click Me</button>
-                <div id="chart-container">
-                    <svg className="chart" width="100%" height="100%"/>
-                </div>
+            <div id="chart-container" className="col-md-12">
+                <svg className="chart"/>
             </div>
-
         );
     }
 }
