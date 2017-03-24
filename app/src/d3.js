@@ -5,6 +5,7 @@ import * as selection from 'd3-selection';
 import * as scale from 'd3-scale';
 import * as transition from 'd3-transition';
 import * as array from 'd3-array';
+import * as timeformat from 'd3-time-format';
 
-export default Object.assign({}, shape, axis, format, selection, scale, transition, array);
+export default Object.assign({}, shape, axis, format, selection, scale, transition, array, timeformat);
 

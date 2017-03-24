@@ -7,7 +7,7 @@ import bootstrap from '../../node_modules/bootstrap/dist/css/bootstrap.css';
 class Main extends React.Component {
     render() {
         return (
-            <div className="container">
+            <div className="app-container">
                 <h1>DATA</h1>
                 <div className="row">
                     <Chart></Chart>

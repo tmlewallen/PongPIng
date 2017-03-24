@@ -2,6 +2,7 @@ import React from 'react';
 import 'whatwg-fetch';
 import d3 from './d3';
 import MOCK from './MOCK';
+import moment from 'moment';
 import * as _ from 'lodash';
 
 export default class Chart extends React.Component {
@@ -9,11 +10,12 @@ export default class Chart extends React.Component {
         super();
         this.state = {
             data: [],
-            maxPoints : 100
+            maxPoints : 50,
+            pollPeriod : 2
         };
 
-        this.getPongStats();
-        this.pollPongStats(2000);
+        this.getPongStats(moment().subtract(10,'minutes'));
+        this.pollPongStats(this.state.pollPeriod * 1000);
     }
 
     componentDidMount() {
@@ -33,9 +35,11 @@ export default class Chart extends React.Component {
             .attr('class', 'y-axis');
 
         this.rebuildChart();
+
     }
 
     rebuildChart() {
+        console.info(`Num of Points : ${this.state.data.length}`)
         let width = Number.parseFloat(_.trim(this.svg.style('width'), 'px'));
         let height = Number.parseFloat(_.trim(this.svg.style('height'), 'px'));
         let paddingRight = Number.parseFloat(_.trim(this.svg.style('padding-right'), 'px'));
@@ -46,27 +50,29 @@ export default class Chart extends React.Component {
         width = width - paddingRight - paddingLeft;
         height = height - paddingTop - paddingBottom;
 
-        var x = d3.scaleLinear()
-            .domain([d3.min(this.state.data, (d) => d.id), d3.max(this.state.data, (d) => d.id)])
+        let timeFormat = d3.timeFormat('%b %d %I:%M:%S %p')
+
+        let x = d3.scaleLinear()
+            .domain([d3.min(this.state.data, (d) => d.timestamp * 1000), d3.max(this.state.data, (d) => d.timestamp * 1000)])
             .range([0, width]);
 
-        var y = d3.scaleLinear()
-            .domain([0, 1])
+        let y = d3.scaleLinear()
+            .domain([d3.min(this.state.data, (d) => d.val), d3.max(this.state.data, (d) => d.val)])
             .range([height - 20, 0]);
 
-        var graph = d3.line()
-            .x((d) => x(d.id))
-            .y((d) => y(d.value));
+        let graph = d3.line()
+            .x((d) => x(new Date(d.timestamp * 1000)))
+            .y((d) => y(d.val));
 
-        var xAxis = d3.axisBottom(x)
-            .ticks(50)
+        let xAxis = d3.axisBottom(x)
+            .ticks(25)
             .tickSizeInner(-height)
-            .tickPadding(5);
+            .tickFormat(timeFormat);
+            // .tickPadding(5);
 
-        var yAxis = d3.axisLeft(y)
+        let yAxis = d3.axisLeft(y)
             .tickSizeInner(-width)
             .tickPadding(5);
-
 
         this.svg.select('path')
             .datum(this.state.data)
@@ -78,19 +84,31 @@ export default class Chart extends React.Component {
 
         this.svg.select('.x-axis')
             .attr('transform', 'translate(0,' + (height - 20) + ')')
-            .call(xAxis);
+            .call(xAxis)
+            .selectAll('text')
+            .attr("transform", "rotate(-45)")
+            .style("text-anchor", "end");
 
         this.svg.select('.y-axis')
             .call(yAxis);
     }
 
-    getPongStats() {
-        fetch('./data').then((response) => {
+    getPongStats(d) {
+        let dt = d ? d : moment().subtract(this.state.pollPeriod, 'seconds');
+        console.log(dt.format());
+        fetch(`./data/list/${dt.format()}`).then((response) => {
             response.json().then((d) => {
-                // this.setState({ data : d});
-                d.forEach( (el) => {
-                    this.state.data.shift();
-                })
+                // console.log(d);
+                // console.log(`Length Before ${this.state.data.length}`)
+                let newSize = this.state.data.length + d.length;
+                if (this.state.data.length === 0 && d.length > this.state.maxPoints){
+                    d = d.splice(d.length - this.state.maxPoints, d.length);
+                }
+                else if (newSize > this.state.maxPoints){
+                    this.shiftArray(this.state.data, newSize - this.state.maxPoints);
+                }
+                // console.log(this.state.data);
+                // console.log(`Length After ${this.state.data.length}`)
                 d.forEach( (el) => {
                     this.state.data.push(el);
                 });
@@ -106,6 +124,18 @@ export default class Chart extends React.Component {
             this.getPongStats();
             this.pollPongStats(period);
         }, period);
+    }
+
+    shiftArray(arr, i){
+        let l = arr.length;
+        let r = 0;
+        for (let j = i; j < l; j++){
+            arr[r] = arr[j];
+            r++;
+        }
+        for (let j = 0; j < i; j++){
+            arr.pop();
+        }
     }
 
     render() {
