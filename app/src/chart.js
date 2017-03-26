@@ -1,7 +1,6 @@
 import React from 'react';
 import 'whatwg-fetch';
 import d3 from './d3';
-import MOCK from './MOCK';
 import moment from 'moment';
 import * as _ from 'lodash';
 
@@ -14,7 +13,7 @@ export default class Chart extends React.Component {
             pollPeriod : 2
         };
 
-        this.getPongStats(moment().subtract(10,'minutes'));
+        this.getPongStats(moment().subtract(5,'minutes'));
         this.pollPongStats(this.state.pollPeriod * 1000);
     }
 
@@ -74,13 +73,17 @@ export default class Chart extends React.Component {
             .tickSizeInner(-width)
             .tickPadding(5);
 
-        this.svg.select('path')
+        let p = this.svg.select('path')
             .datum(this.state.data)
             .attr('stroke', '#F96302')
             .attr('stroke-width', 3)
-            .attr('fill', 'none')
-            .transition()
-            .attr('d', graph)
+            .attr('fill', 'none');
+            // .transition()
+
+        if (this.state.data.length < this.state.maxPoints){
+            p = p.transition();
+        }
+        p.attr('d', graph);
 
         this.svg.select('.x-axis')
             .attr('transform', 'translate(0,' + (height - 20) + ')')
@@ -105,7 +108,7 @@ export default class Chart extends React.Component {
                     d = d.splice(d.length - this.state.maxPoints, d.length);
                 }
                 else if (newSize > this.state.maxPoints){
-                    this.shiftArray(this.state.data, newSize - this.state.maxPoints);
+                    this.state.data = this.state.data.splice(newSize - this.state.maxPoints);
                 }
                 // console.log(this.state.data);
                 // console.log(`Length After ${this.state.data.length}`)

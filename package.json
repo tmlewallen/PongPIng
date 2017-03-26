@@ -7,7 +7,8 @@
   "author": "tmlewallen <tlew0692@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "source env.sh && node server/index.js"
+    "start": "source env.sh && node server/index.js",
+    "pi" : "source env.sh && python3 pi/serial_test.py"
   },
   "dependencies": {
     "babel-core": "^6.22.1",
