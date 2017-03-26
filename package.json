@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "start": "source env.sh && node server/index.js",
-    "pi" : "source env.sh && python3 pi/serial_test.py"
+    "pi" : "source pi/env.sh && python3 pi/serial_test.py"
   },
   "dependencies": {
     "babel-core": "^6.22.1",
