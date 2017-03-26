@@ -101,17 +101,13 @@ export default class Chart extends React.Component {
         console.log(dt.format());
         fetch(`./data/list/${dt.format()}`).then((response) => {
             response.json().then((d) => {
-                // console.log(d);
-                // console.log(`Length Before ${this.state.data.length}`)
                 let newSize = this.state.data.length + d.length;
                 if (this.state.data.length === 0 && d.length > this.state.maxPoints){
-                    d = d.splice(d.length - this.state.maxPoints, d.length);
+                    d = d.splice(d.length - this.state.maxPoints);
                 }
                 else if (newSize > this.state.maxPoints){
                     this.state.data = this.state.data.splice(newSize - this.state.maxPoints);
                 }
-                // console.log(this.state.data);
-                // console.log(`Length After ${this.state.data.length}`)
                 d.forEach( (el) => {
                     this.state.data.push(el);
                 });
