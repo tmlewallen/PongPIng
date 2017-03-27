@@ -41,6 +41,7 @@ def main(sys, os):
         ts = time()
         datum = {
             "tableId": 1,
+            "raw-val" : curr,
             "val": val,
             "timestamp":ts
         }
