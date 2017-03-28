@@ -19,7 +19,7 @@ def main(sys, os):
         print(sys.argv)
         return
     port = sys.argv[1]
-    # ser = serial.Serial(port, 14400)
+    ser = serial.Serial(port, 14400)
     curr = 0
     last = 0
     db = None
@@ -33,9 +33,9 @@ def main(sys, os):
     print('Connected!')
     col = db.pong
     while True:
-        # read_serial = ser.readline()
-        # curr = int(ser.readline(), 16)
-        curr = randint(0,1000)
+        read_serial = ser.readline()
+        curr = int(ser.readline(), 16)
+        #curr = randint(0,1000)
         val = curr - last
         print(val)
         ts = time()
@@ -47,6 +47,6 @@ def main(sys, os):
         }
         col.insert_one(datum)
         last = curr
-        sleep(1)
+        #sleep(1)
 
 main(sys, os)
