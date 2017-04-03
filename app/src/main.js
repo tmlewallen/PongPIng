@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Chart from './chart';
+import Chart from './chart/chart';
 import styles from './styles.css';
 import bootstrap from '../../node_modules/bootstrap/dist/css/bootstrap.css';
 

@@ -9,12 +9,12 @@ export default class Chart extends React.Component {
         super();
         this.state = {
             data: [],
-            maxPoints : 50,
+            maxPoints : 5000,
             pollPeriod : 2
         };
 
-        this.getPongStats(moment().subtract(5,'minutes'));
-        this.pollPongStats(this.state.pollPeriod * 1000);
+        this.getPongStats(moment().subtract(20,'minutes'));
+        // this.pollPongStats(this.state.pollPeriod * 1000);
     }
 
     componentDidMount() {
@@ -25,7 +25,6 @@ export default class Chart extends React.Component {
         this.svg.append('g')
             .attr('class', 'path-container')
             .append('path');
-
 
         this.svg.append('g')
             .attr('class', 'x-axis');
@@ -56,12 +55,12 @@ export default class Chart extends React.Component {
             .range([0, width]);
 
         let y = d3.scaleLinear()
-            .domain([d3.min(this.state.data, (d) => d.val), d3.max(this.state.data, (d) => d.val)])
+            .domain([d3.min(this.state.data, (d) => d.delta), d3.max(this.state.data, (d) => d.delta)])
             .range([height - 20, 0]);
 
         let graph = d3.line()
             .x((d) => x(new Date(d.timestamp * 1000)))
-            .y((d) => y(d.val));
+            .y((d) => y(d.delta));
 
         let xAxis = d3.axisBottom(x)
             .ticks(25)
@@ -123,18 +122,6 @@ export default class Chart extends React.Component {
             this.getPongStats();
             this.pollPongStats(period);
         }, period);
-    }
-
-    shiftArray(arr, i){
-        let l = arr.length;
-        let r = 0;
-        for (let j = i; j < l; j++){
-            arr[r] = arr[j];
-            r++;
-        }
-        for (let j = 0; j < i; j++){
-            arr.pop();
-        }
     }
 
     render() {
