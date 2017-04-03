@@ -14,7 +14,7 @@ def main(sys, os):
         return
 
     port = sys.argv[1]
-    ser = serial.Serial(port, 14400)
+    ser = serial.Serial(port, 9600)
 
     url = os.environ.get('MONGO_URL')
     usr = os.environ.get('MONGO_USR')
@@ -36,7 +36,7 @@ def main(sys, os):
     count = 0
     while True:
         read_serial = ser.readline()
-        curr = int(ser.readline(), 16)
+        curr = int(read_serial, 16)
         # curr = randint(0,1000)
         val = curr - last
         print(val)
@@ -49,6 +49,7 @@ def main(sys, os):
         }
         if count > 1800:
             col.insert_one(datum)
+            count = 0
         last = curr
         sleep(1)
         count += 1
