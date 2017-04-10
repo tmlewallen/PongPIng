@@ -1,14 +1,18 @@
-int sensorPin = 0;
-int ledPin = 9;
-int sensorValue = 0;
-
+int sensorPin = A0;
+int sensorVal = 0;
+int lastVal = 0;
+long timer = 0;
+long TIMEOUT = 7200;
 void setup() {
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(14400);
+  Serial.begin(19200);
 }
 
 void loop() {
-  sensorValue = analogRead(sensorPin);
-  Serial.println(sensorValue);
-  delay(25);
+  sensorVal = analogRead(sensorPin);
+  if (sensorVal - lastVal != 0 || timer > TIMEOUT) {
+    Serial.println(sensorVal);
+    timer = 0;
+  }
+  lastVal = sensorVal;
+  timer = timer + 1;
 }

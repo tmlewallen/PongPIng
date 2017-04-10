@@ -5,7 +5,16 @@ from pymongo import MongoClient
 
 import serial
 import os
+import traceback
 
+def connect(url, usr, pwd):
+    if url == None or usr == None or pwd == None:
+        print('Missing connection details!')
+        print('Defaulting to localhost...')
+        return MongoClient(connect=True).PongPing
+    print('Connecting to ' + url + '...')
+    connString = 'mongodb://' + usr + ':' + pwd + '@' + url
+    return MongoClient(connString, connect=True, socketTimeoutMS=1000, serverSelectionTimeoutMS=100).heroku_0x5v55l7
 
 def main(sys, os):
     if len(sys.argv) < 2:
@@ -14,44 +23,49 @@ def main(sys, os):
         return
 
     port = sys.argv[1]
-    ser = serial.Serial(port, 9600)
+    ser = serial.Serial(port, 19200)
 
     url = os.environ.get('MONGO_URL')
     usr = os.environ.get('MONGO_USR')
     pwd = os.environ.get('MONGO_PWD')
 
     db = None
-    if url == None or usr == None or pwd == None:
-        print('Connecting to localhost...')
-        db = MongoClient().PongPing
-    else :
-        print('Connecting to ' + url + '...')
-        connString = 'mongodb://' + usr + ':' + pwd + '@' + url
-        db = MongoClient(connString).heroku_0x5v55l7
-    print('Connected!')
-    col = db.pong
-
     curr = 0
-    last = 0
+    delta = 0
     count = 0
+    db = connect(url,usr,pwd)
+    col = db.pong
+    buff = []
+    lastInsert = time()
+    last = 0
+    BUFFER_LIMIT = 500
     while True:
-        read_serial = ser.readline()
-        curr = int(read_serial, 16)
-        # curr = randint(0,1000)
-        val = curr - last
-        print(val)
-        ts = time()
-        datum = {
-            "tableId": 1,
-            "rawVal" : curr,
-            "delta": val,
-            "timestamp":ts
-        }
-        if count > 1800:
-            col.insert_one(datum)
-            count = 0
-        last = curr
-        sleep(1)
-        count += 1
+        try:
+            read_serial = ser.readline()
+            curr = int(read_serial, 16)
+
+            delta = curr - last
+            ts = time()
+            datum = {
+                "tableId": 1,
+                "rawVal" : curr,
+                "delta": delta,
+                "timestamp":ts
+            }
+
+            if len(buff) >= BUFFER_LIMIT or ts - lastInsert > 3:
+                col.insert_many(buff, ordered=True)
+                buff = []
+                lastInsert = ts
+            else:
+                buff.append(datum)
+
+            last = curr
+        except Exception as e:
+            traceback.print_exc()
+
+        print('Input Buffer : ' + str(ser.in_waiting))
 
 main(sys, os)
+
+
