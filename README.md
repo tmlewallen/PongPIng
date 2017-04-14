@@ -6,6 +6,7 @@
  - [ ] Styling
  - [ ] Inputs for time window and poll period
  - [ ] Deploy (lol)
+ - [ ] Connect piezo sensor directly to Pi
  - [ ] Better webpack usage - move everything needed to dist folder
  
  ## Running
