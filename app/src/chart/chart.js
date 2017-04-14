@@ -9,12 +9,13 @@ export default class Chart extends React.Component {
         super();
         this.state = {
             data: [],
-            maxPoints : 5000,
-            pollPeriod : 2
+            maxPoints : 1000,
+            pollPeriod : 5,
+            timeWindow : 10
         };
 
-        this.getPongStats(moment().subtract(20,'minutes'));
-        // this.pollPongStats(this.state.pollPeriod * 1000);
+        this.getPongStats(moment().subtract(this.state.timeWindow,'minutes'));
+        this.pollPongStats(this.state.pollPeriod * 1000);
     }
 
     componentDidMount() {
@@ -63,7 +64,7 @@ export default class Chart extends React.Component {
             .y((d) => y(d.delta));
 
         let xAxis = d3.axisBottom(x)
-            .ticks(25)
+            .ticks(this.state.timeWindow * 5)
             .tickSizeInner(-height)
             .tickFormat(timeFormat);
             // .tickPadding(5);
@@ -75,7 +76,7 @@ export default class Chart extends React.Component {
         let p = this.svg.select('path')
             .datum(this.state.data)
             .attr('stroke', '#F96302')
-            .attr('stroke-width', 3)
+            .attr('stroke-width', 1)
             .attr('fill', 'none');
             // .transition()
 
@@ -96,20 +97,21 @@ export default class Chart extends React.Component {
     }
 
     getPongStats(d) {
-        let dt = d ? d : moment().subtract(this.state.pollPeriod, 'seconds');
+        let dt = d ? d : moment().subtract(this.state.timeWindow, 'minutes');
         console.log(dt.format());
         fetch(`./data/list/${dt.format()}`).then((response) => {
             response.json().then((d) => {
-                let newSize = this.state.data.length + d.length;
-                if (this.state.data.length === 0 && d.length > this.state.maxPoints){
-                    d = d.splice(d.length - this.state.maxPoints);
-                }
-                else if (newSize > this.state.maxPoints){
-                    this.state.data = this.state.data.splice(newSize - this.state.maxPoints);
-                }
-                d.forEach( (el) => {
-                    this.state.data.push(el);
-                });
+                this.state.data = d;
+                // let newSize = this.state.data.length + d.length;
+                // if (this.state.data.length === 0 && d.length > this.state.maxPoints){
+                //     d = d.splice(d.length - this.state.maxPoints);
+                // }
+                // else if (newSize > this.state.maxPoints){
+                //     this.state.data = this.state.data.splice(newSize - this.state.maxPoints);
+                // }
+                // d.forEach( (el) => {
+                //     this.state.data.push(el);
+                // });
                 this.rebuildChart();
             });
         }).catch((err) => {

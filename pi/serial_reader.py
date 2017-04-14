@@ -2,6 +2,8 @@ import sys
 from random import randint
 from time import sleep, time
 from pymongo import MongoClient
+from pymongo.errors import BulkWriteError
+from pprint import pprint
 
 import serial
 import os
@@ -14,7 +16,7 @@ def connect(url, usr, pwd):
         return MongoClient(connect=True).PongPing
     print('Connecting to ' + url + '...')
     connString = 'mongodb://' + usr + ':' + pwd + '@' + url
-    return MongoClient(connString, connect=True, socketTimeoutMS=1000, serverSelectionTimeoutMS=100).heroku_0x5v55l7
+    return MongoClient(connString, connect=True, socketTimeoutMS=1000, serverSelectionTimeoutMS=200).heroku_0x5v55l7
 
 def main(sys, os):
     if len(sys.argv) < 2:
@@ -39,6 +41,7 @@ def main(sys, os):
     lastInsert = time()
     last = 0
     BUFFER_LIMIT = 500
+    _id = int(time())
     while True:
         try:
             read_serial = ser.readline()
@@ -47,13 +50,15 @@ def main(sys, os):
             delta = curr - last
             ts = time()
             datum = {
+                "_id": ts,
                 "tableId": 1,
-                "rawVal" : curr,
+                "rawVal": curr,
                 "delta": delta,
                 "timestamp":ts
             }
 
             if len(buff) >= BUFFER_LIMIT or ts - lastInsert > 3:
+                buff.append(datum)
                 col.insert_many(buff, ordered=True)
                 buff = []
                 lastInsert = ts
@@ -61,11 +66,15 @@ def main(sys, os):
                 buff.append(datum)
 
             last = curr
+        except BulkWriteError as err :
+            pprint(err.details)
+            pprint(datum)
+            buff = []
         except Exception as e:
             traceback.print_exc()
 
         print('Input Buffer : ' + str(ser.in_waiting))
-
+        _id += 1
 main(sys, os)
 
 
