@@ -2,7 +2,7 @@ int sensorPin = A0;
 int sensorVal = 0;
 int lastVal = 0;
 long timer = 0;
-long TIMEOUT = 7200;
+long TIMEOUT = 43200;
 void setup() {
   Serial.begin(19200);
 }

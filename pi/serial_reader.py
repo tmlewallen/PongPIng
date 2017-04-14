@@ -57,7 +57,7 @@ def main(sys, os):
                 "timestamp":ts
             }
 
-            if len(buff) >= BUFFER_LIMIT or ts - lastInsert > 3:
+            if len(buff) >= BUFFER_LIMIT or ts - lastInsert > 5:
                 buff.append(datum)
                 col.insert_many(buff, ordered=True)
                 buff = []
@@ -68,7 +68,6 @@ def main(sys, os):
             last = curr
         except BulkWriteError as err :
             pprint(err.details)
-            pprint(datum)
             buff = []
         except Exception as e:
             traceback.print_exc()
